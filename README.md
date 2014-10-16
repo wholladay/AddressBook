@@ -1,0 +1,1 @@
+# This is a simple Address Book application for the Android platform.
