@@ -3,4 +3,11 @@
   <string name="app_name">Address Book</string>
   <string name="no_contacts">No Contacts Yet</string>
   <string name="menu_insert">Add Contact</string>
+  <string name="menu_delete">Delete Contact</string>
+  <string name="first_name">First Name</string>
+  <string name="last_name">Last Name</string>
+  <string name="phone">Phone</string>
+  <string name="email">Email</string>
+  <string name="confirm">Confirm</string>
+  <string name="edit_contact">Edit Contact</string>
 </resources>
