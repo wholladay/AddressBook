@@ -12,12 +12,15 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
-import static com.lhs.addressbook.AddressBookDbAdapter.KEY_EMAIL;
 import static com.lhs.addressbook.AddressBookDbAdapter.KEY_FIRST_NAME;
 import static com.lhs.addressbook.AddressBookDbAdapter.KEY_LAST_NAME;
-import static com.lhs.addressbook.AddressBookDbAdapter.KEY_PHONE;
 import static com.lhs.addressbook.AddressBookDbAdapter.KEY_ROWID;
 
+/**
+ * The main activity, which displays a list of contacts.
+ * <p/>
+ * Created by wholladay on 10/15/14.
+ */
 public class MainActivity extends ListActivity {
 
     private static final int ACTIVITY_CREATE = 0;
@@ -26,8 +29,7 @@ public class MainActivity extends ListActivity {
     private static final int INSERT_ID = Menu.FIRST;
     private static final int DELETE_ID = Menu.FIRST + 1;
 
-    private AddressBookDbAdapter addressBookDbAdapter;
-    private Cursor contactsCursor;
+    private AddressBookDbAdapter abHelper;
 
     /**
      * Called when the activity is first created.
@@ -37,8 +39,8 @@ public class MainActivity extends ListActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.contact_list);
-        addressBookDbAdapter = new AddressBookDbAdapter(this);
-        addressBookDbAdapter.open();
+        abHelper = new AddressBookDbAdapter(this);
+        abHelper.open();
         fillData();
         registerForContextMenu(getListView());
     }
@@ -76,7 +78,7 @@ public class MainActivity extends ListActivity {
         switch (item.getItemId()) {
             case DELETE_ID:
                 AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-                addressBookDbAdapter.deleteContact(info.id);
+                abHelper.deleteContact(info.id);
                 fillData();
                 return true;
         }
@@ -85,49 +87,17 @@ public class MainActivity extends ListActivity {
 
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
-        super.onListItemClick(l, v, position, id);
 
         super.onListItemClick(l, v, position, id);
-        Cursor c = contactsCursor;
-        c.moveToPosition(position);
         Intent i = new Intent(this, ContactEdit.class);
         i.putExtra(KEY_ROWID, id);
-        i.putExtra(KEY_FIRST_NAME, c.getString(c.getColumnIndexOrThrow(KEY_FIRST_NAME)));
-        i.putExtra(KEY_LAST_NAME, c.getString(c.getColumnIndexOrThrow(KEY_LAST_NAME)));
-        i.putExtra(KEY_PHONE, c.getString(c.getColumnIndexOrThrow(KEY_PHONE)));
-        i.putExtra(KEY_EMAIL, c.getString(c.getColumnIndexOrThrow(KEY_EMAIL)));
         startActivityForResult(i, ACTIVITY_EDIT);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
-
-        super.onActivityResult(requestCode, resultCode, intent);
-        Bundle extras = intent.getExtras();
-
-        switch (requestCode) {
-            case ACTIVITY_CREATE:
-                String firstName = extras.getString(KEY_FIRST_NAME);
-                String lastName = extras.getString(KEY_LAST_NAME);
-                String phone = extras.getString(KEY_PHONE);
-                String email = extras.getString(KEY_EMAIL);
-                addressBookDbAdapter.createContact(firstName, lastName, phone, email);
-                fillData();
-                break;
-            case ACTIVITY_EDIT:
-                long rowId = extras.getLong(KEY_ROWID);
-                if (rowId > 0) {
-                    String editFirstName = extras.getString(KEY_FIRST_NAME);
-                    String editLastName = extras.getString(KEY_LAST_NAME);
-                    String editPhone = extras.getString(KEY_PHONE);
-                    String editEmail = extras.getString(KEY_EMAIL);
-                    addressBookDbAdapter.updateContact(rowId, editFirstName, editLastName, editPhone, editEmail);
-                }
-                fillData();
-                break;
-        }
-
+        fillData();
     }
 
     private void createContact() {
@@ -138,7 +108,7 @@ public class MainActivity extends ListActivity {
 
     private void fillData() {
         // Get all of the contacts from the database and create the item list
-        contactsCursor = addressBookDbAdapter.fetchAllContacts();
+        Cursor contactsCursor = abHelper.fetchAllContacts();
         startManagingCursor(contactsCursor);
 
         String[] from = new String[]{KEY_FIRST_NAME, KEY_LAST_NAME};
