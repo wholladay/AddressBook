@@ -141,8 +141,8 @@ public class MainActivity extends ListActivity {
         contactsCursor = addressBookDbAdapter.fetchAllContacts();
         startManagingCursor(contactsCursor);
 
-        String[] from = new String[]{AddressBookDbAdapter.KEY_FIRST_NAME};
-        int[] to = new int[]{R.id.name};
+        String[] from = new String[]{KEY_FIRST_NAME, KEY_LAST_NAME};
+        int[] to = new int[]{R.id.first_name, R.id.last_name};
 
         // Now create an array adapter and set it to display using our row
         SimpleCursorAdapter contacts = new SimpleCursorAdapter(this, R.layout.contact_row, contactsCursor, from, to);
