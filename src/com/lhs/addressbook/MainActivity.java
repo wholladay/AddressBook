@@ -25,9 +25,11 @@ public class MainActivity extends ListActivity {
 
     private static final int ACTIVITY_CREATE = 0;
     private static final int ACTIVITY_EDIT = 1;
+    private static final int ACTIVITY_PREF = 2;
 
     private static final int INSERT_ID = Menu.FIRST;
     private static final int DELETE_ID = Menu.FIRST + 1;
+    private static final int PREF_ID = Menu.FIRST + 2;
 
     private AddressBookDbAdapter abHelper;
 
@@ -41,8 +43,24 @@ public class MainActivity extends ListActivity {
         setContentView(R.layout.contact_list);
         abHelper = new AddressBookDbAdapter(this);
         abHelper.open();
-        fillData();
         registerForContextMenu(getListView());
+
+
+        // Temporary code
+        populateEmptyDB();
+        fillData();
+    }
+
+    private void populateEmptyDB() {
+        Cursor contacts = abHelper.fetchAllContacts();
+        if (contacts.getCount() == 0) {
+            abHelper.createContact("Walter", "Holladay", "801-555-1234", "walter@whatever.com");
+            abHelper.createContact("Karen", "Holladay", "801-555-1234", "karen@whatever.com");
+            abHelper.createContact("Jeff", "Campbell", "801-555-2345", "jeff@lds.org");
+            abHelper.createContact("Matt", "Zabrisky", "801-555-3456", "matt@somehwere.com");
+            abHelper.createContact("Mike", "Scalora", "801-555-4567", "mike@thisistheplace.com");
+            abHelper.createContact("Dave", "Duncan", "801-555-5678", "dave@lawschool.com");
+        }
     }
 
     @Override
@@ -50,6 +68,7 @@ public class MainActivity extends ListActivity {
 
         super.onCreateOptionsMenu(menu);
         menu.add(0, INSERT_ID, 0, R.string.menu_insert);
+        menu.add(0, PREF_ID, 1, R.string.pref_menuTitle);
         return true;
     }
 
@@ -59,6 +78,9 @@ public class MainActivity extends ListActivity {
         switch (item.getItemId()) {
             case INSERT_ID:
                 createContact();
+                return true;
+            case PREF_ID:
+                openPrefs();
                 return true;
         }
 
@@ -89,21 +111,35 @@ public class MainActivity extends ListActivity {
     protected void onListItemClick(ListView l, View v, int position, long id) {
 
         super.onListItemClick(l, v, position, id);
-        Intent i = new Intent(this, ContactEdit.class);
-        i.putExtra(KEY_ROWID, id);
-        startActivityForResult(i, ACTIVITY_EDIT);
+        Intent editIntent = new Intent(this, ContactEdit.class);
+        editIntent.putExtra(KEY_ROWID, id);
+        startActivityForResult(editIntent, ACTIVITY_EDIT);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+
         super.onActivityResult(requestCode, resultCode, intent);
-        fillData();
+
+        switch (requestCode) {
+            case ACTIVITY_CREATE:
+            case ACTIVITY_EDIT:
+            case ACTIVITY_PREF:
+                fillData();
+                break;
+        }
     }
 
     private void createContact() {
 
-        Intent i = new Intent(this, ContactEdit.class);
-        startActivityForResult(i, ACTIVITY_CREATE);
+        Intent createIntent = new Intent(this, ContactEdit.class);
+        startActivityForResult(createIntent, ACTIVITY_CREATE);
+    }
+
+    private void openPrefs() {
+
+        Intent prefIntent = new Intent(this, PrefActivity.class);
+        startActivityForResult(prefIntent, ACTIVITY_PREF);
     }
 
     private void fillData() {

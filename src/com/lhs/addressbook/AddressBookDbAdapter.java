@@ -17,10 +17,12 @@ package com.lhs.addressbook;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 /**
@@ -42,6 +44,7 @@ public class AddressBookDbAdapter {
 
     private static final String DATABASE_NAME = "address_book";
     private static final String TABLE_NAME = "contact";
+    private static final String[] ORDER_BY = {KEY_LAST_NAME + ", " + KEY_FIRST_NAME, KEY_FIRST_NAME + ", " + KEY_LAST_NAME};
     private static final int DATABASE_VERSION = 1;
 
     /**
@@ -149,8 +152,12 @@ public class AddressBookDbAdapter {
      */
     public Cursor fetchAllContacts() {
 
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        int prefSortBy = Integer.parseInt(sharedPreferences.getString("pref_sortBy", "0"));
+        String orderBy = ORDER_BY[prefSortBy];
+
         return database.query(TABLE_NAME, new String[]{KEY_ROWID, KEY_FIRST_NAME,
-                KEY_LAST_NAME, KEY_PHONE, KEY_EMAIL}, null, null, null, null, null);
+                KEY_LAST_NAME, KEY_PHONE, KEY_EMAIL}, null, null, null, null, orderBy);
     }
 
     /**
@@ -176,11 +183,11 @@ public class AddressBookDbAdapter {
      * Update the contact using the details provided. The contact to be updated is specified using the rowId, and it is
      * altered to use the field values passed in.
      *
-     * @param rowId id of note to update
+     * @param rowId     id of note to update
      * @param firstName value to set contact's first name to
      * @param lastName  value to set contact's last name to
-     * @param phone value to set the contact's phone number to
-     * @param email value to set the contact's email address to
+     * @param phone     value to set the contact's phone number to
+     * @param email     value to set the contact's email address to
      * @return true if the contact was successfully updated, false otherwise
      */
     public boolean updateContact(long rowId, String firstName, String lastName, String phone, String email) {
