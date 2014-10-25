@@ -16,7 +16,11 @@
         <category android:name="android.intent.category.LAUNCHER"/>
       </intent-filter>
     </activity>
-    <activity android:name="com.lhs.addressbook.ContactEdit"/>
-    <activity android:name="com.lhs.addressbook.PrefActivity"/>
+    <activity
+        android:name="com.lhs.addressbook.ContactEdit"
+        android:parentActivityName=".MainActivity"/>
+    <activity
+        android:name="com.lhs.addressbook.PrefActivity"
+        android:parentActivityName=".MainActivity"/>
   </application>
 </manifest>

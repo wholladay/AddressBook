@@ -15,7 +15,7 @@ import static com.lhs.addressbook.AddressBookDbAdapter.KEY_ROWID;
 
 /**
  * Activity for editing a single contact.
- *
+ * <p/>
  * Created by wholladay on 10/17/14.
  */
 public class ContactEdit extends Activity {
