@@ -52,8 +52,8 @@ public class AddressBookDbAdapter {
      */
     private static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " (" +
             KEY_ROWID + " INTEGER PRIMARY KEY, " +
-            KEY_FIRST_NAME + " TEXT NOT NULL, " +
-            KEY_LAST_NAME + " TEXT NOT NULL, " +
+            KEY_FIRST_NAME + " TEXT NOT NULL CHECK(LENGTH(" + KEY_FIRST_NAME + ") > 0), " +
+            KEY_LAST_NAME + " TEXT NOT NULL CHECK(LENGTH(" + KEY_LAST_NAME + ") > 0), " +
             KEY_PHONE + " TEXT, " +
             KEY_EMAIL + " TEXT);";
 
