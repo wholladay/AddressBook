@@ -20,7 +20,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:inputType="text"/>
+        android:inputType="textCapWords"
+        android:selectAllOnFocus="true"/>
   </LinearLayout>
 
   <LinearLayout
@@ -38,7 +39,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:inputType="text"/>
+        android:inputType="textCapWords"
+        android:selectAllOnFocus="true"/>
   </LinearLayout>
 
   <LinearLayout
@@ -55,7 +57,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:inputType="phone"/>
+        android:inputType="phone"
+        android:selectAllOnFocus="true"/>
   </LinearLayout>
 
   <LinearLayout
@@ -72,7 +75,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:inputType="textEmailAddress"/>
+        android:inputType="textEmailAddress"
+        android:selectAllOnFocus="true"/>
   </LinearLayout>
 
   <Button

@@ -3,6 +3,7 @@ package com.lhs.addressbook;
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,6 +28,11 @@ public class ContactEdit extends Activity {
     private EditText phoneText;
     private EditText emailText;
 
+    /**
+     * Activity is being created and needs to be initialized.
+     *
+     * @param savedInstanceState The bundle that contains the field values, may be null.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
@@ -52,13 +58,19 @@ public class ContactEdit extends Activity {
         confirmButton.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
-                saveState();
-                setResult(RESULT_OK);
-                finish();
+                if (saveContact()) {
+                    setResult(RESULT_OK);
+                    finish();
+                }
             }
         });
     }
 
+    /**
+     * Save the current values of the form so that they can be restored later.
+     *
+     * @param outState The bundle that will receive the form state.
+     */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -71,12 +83,24 @@ public class ContactEdit extends Activity {
         saveTextField(outState, KEY_EMAIL, emailText);
     }
 
+    /**
+     * Called after the activity has been suspended.
+     *
+     * @param savedInstanceState The bundle, which contains the state of the form.
+     */
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         populateFieldsFromBundle(savedInstanceState);
     }
 
+    /**
+     * Get the value from an edit text field and save it to the specified bundle.
+     *
+     * @param outState The bundle that will receive the text value.
+     * @param key      The key to use for storing the value in the bundl.
+     * @param field    The text field that holds the value to be saved.
+     */
     private void saveTextField(Bundle outState, String key, EditText field) {
 
         String val = field.getText().toString();
@@ -85,6 +109,13 @@ public class ContactEdit extends Activity {
         }
     }
 
+    /**
+     * Set the value of the single text field from a bundle.
+     *
+     * @param savedInstanceState The bundle that will be queried for a value.
+     * @param key                The key to use in retrieving the value from the bundle.
+     * @param field              The edit text field that needs to be set.
+     */
     private void restoreTextField(Bundle savedInstanceState, String key, EditText field) {
 
         String val = savedInstanceState.getString(key);
@@ -93,6 +124,9 @@ public class ContactEdit extends Activity {
         }
     }
 
+    /**
+     * Initialize the form fields from the values that are currently stored in the database.
+     */
     private void populateFieldsFromDB() {
 
         Bundle extras = getIntent().getExtras();
@@ -107,6 +141,11 @@ public class ContactEdit extends Activity {
         }
     }
 
+    /**
+     * Initialize all the form fields from the specified bundle.
+     *
+     * @param savedInstanceState The bundle that contains the field values.
+     */
     private void populateFieldsFromBundle(Bundle savedInstanceState) {
 
         if (savedInstanceState != null) {
@@ -120,19 +159,47 @@ public class ContactEdit extends Activity {
         }
     }
 
-    private void saveState() {
+    /**
+     * Validate and save the contact to the database. The first and last name fields are required to save an entry in
+     * the database.
+     *
+     * @return true if the contact was successfully saved to the DB.
+     */
+    private boolean saveContact() {
+        boolean success = true;
         String firstName = firstNameText.getText().toString();
         String lastName = lastNameText.getText().toString();
         String phone = phoneText.getText().toString();
         String email = emailText.getText().toString();
 
-        if (rowId > 0) {
-            abHelper.updateContact(rowId, firstName, lastName, phone, email);
-        } else {
-            long id = abHelper.createContact(firstName, lastName, phone, email);
-            if (id > 0) {
-                rowId = id;
+        if (firstName.length() < 1) {
+            firstNameText.setError(getString(R.string.err_first_name));
+            success = false;
+        }
+        if (lastName.length() < 1) {
+            lastNameText.setError(getString(R.string.err_last_name));
+            success = false;
+        }
+        if (success) {
+            if (rowId > 0) {
+                try {
+                    abHelper.updateContact(rowId, firstName, lastName, phone, email);
+                } catch (Exception e) {
+                    Log.e("AB", e.getMessage(), e);
+                    success = false;
+                }
+            } else {
+                try {
+                    long id = abHelper.createContact(firstName, lastName, phone, email);
+                    if (id > 0) {
+                        rowId = id;
+                    }
+                } catch (Exception e) {
+                    Log.e("AB", e.getMessage(), e);
+                    success = false;
+                }
             }
         }
+        return success;
     }
 }
