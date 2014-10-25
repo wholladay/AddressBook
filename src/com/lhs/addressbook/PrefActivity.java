@@ -6,6 +6,8 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 
 /**
+ * Activity for preferences.
+ * <p/>
  * Created by wholladay on 10/20/14.
  */
 public class PrefActivity extends Activity {
@@ -20,4 +22,5 @@ public class PrefActivity extends Activity {
         fragmentTransaction.replace(android.R.id.content, prefFragment);
         fragmentTransaction.commit();
     }
+
 }

@@ -12,7 +12,8 @@
   <string name="confirm">Confirm</string>
   <string name="edit_contact">Edit Contact</string>
   <string name="pref_sortByTitle">Sort contacts by</string>
-  <string name="pref_sortBySummary">first or last name</string>
+  <string name="pref_sort_by_last">last name</string>
+  <string name="pref_sort_by_first">first name</string>
   <string name="pref_sortBy_default">0</string>
   <string name="pref_menuTitle">Preferences</string>
 </resources>

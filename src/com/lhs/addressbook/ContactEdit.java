@@ -99,7 +99,6 @@ public class ContactEdit extends Activity {
         rowId = extras != null ? extras.getLong(KEY_ROWID) : 0;
         if (rowId > 0) {
             Cursor contact = abHelper.fetchContact(rowId);
-            // TODO: replace the following with the non-deprecated version...
             startManagingCursor(contact);
             firstNameText.setText(contact.getString(contact.getColumnIndexOrThrow(KEY_FIRST_NAME)));
             lastNameText.setText(contact.getString(contact.getColumnIndexOrThrow(KEY_LAST_NAME)));
